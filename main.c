@@ -37,7 +37,7 @@ int			init_philophers(t_head_struct *all)
 	{
 		all->philo[i].eat_count = 0;
 		all->philo[i].data = all;
-		all->philo[i].last_time_to_eat = get_time();
+	//	all->philo[i].last_time_to_eat = get_time();
 		if (!(all->philo[i].number_philo = ft_itoa(i + 1)))
 			return (0);
 		all->philo[i].left_fork = all->forks[i];
@@ -58,8 +58,8 @@ void	write_action(t_philosophers *philo, int type)
 		ft_putnbr_fd(get_time() - philo->data->start_time, 1);
 		write(1,"\t" ,1);
 		write(1, philo->number_philo, ft_strlen(philo->number_philo)); // num philo
-		if (type == TAKE_FORKS)
-			write(1, " has taken a forks\n", 19);
+		if (type == TAKE_FORK)
+			write(1, " has taken a fork\n", 18);
 		else if (type == EAT)
 			write(1, " is eating\n", 11);
 		else if (type == SLEEP)
@@ -74,48 +74,43 @@ void	write_action(t_philosophers *philo, int type)
 
 void	eat(t_philosophers *philo)
 {
-	pthread_mutex_lock(philo->left_fork);
+	size_t time;
+
 	pthread_mutex_lock(philo->right_fork);
-	write_action(philo, TAKE_FORKS);
+	write_action(philo, TAKE_FORK);
+	pthread_mutex_lock(philo->left_fork);
+	write_action(philo, TAKE_FORK);
 	philo->last_time_to_eat = get_time();
 	philo->limit = philo->last_time_to_eat + philo->data->time_to_die;
 	write_action(philo, EAT);
-	usleep(philo->data->time_to_eat * 1000);
-	pthread_mutex_unlock(philo->left_fork);
+	time = get_time();
+	while (get_time() <= time + philo->data->time_to_eat)
+		usleep(100);
 	pthread_mutex_unlock(philo->right_fork);
-
-//	timestamp_in_ms X has taken a fork
-//	◦ timestamp_in_ms X is eating
-//	◦ timestamp_in_ms X is sleeping
-//	◦ timestamp_in_ms X is thinking
-//	◦ timestamp_in_ms X died
-
+	pthread_mutex_unlock(philo->left_fork);
+	count++;
+	if (count == argv[6])
+		philo->eat_count = 1;
 }
 
 void	*eat_sleep_think(void *tmp)
 {
-	t_philosophers *philo;
+	t_philosophers	*philo;
+	size_t			time;
 
 	philo = (t_philosophers*)tmp;
-
-	if ((ft_atoi(philo->number_philo) % 2) == 0)
+	philo->last_time_to_eat = get_time();
+	philo->limit = philo->last_time_to_eat + philo->data->time_to_die;
 	while (21)
 	{
-		// need check die or no die philo!
-		philo->limit = philo->last_time_to_eat + philo->data->time_to_die;
-//		if (philo->limit < get_time())
-//		{
-//			philo->data->flag_die = 1;
-//			die(philo);
-//		}
 		if (philo->data->flag_die == 1)
 			break ;
 		eat(philo);
-		usleep(philo->data->time_to_sleep * 1000);
+		write_action(philo, SLEEP);
+		time = get_time();
+		while (get_time() <= time + philo->data->time_to_sleep)
+			usleep(100);
 		write_action(philo, THINK);
-
-//		philo->last_time_to_eat = get_time();
-//		philo->limit = philo->last_time_to_eat + g_all_params[1];
 	}
 	return ((void*)0);
 }
@@ -126,32 +121,13 @@ void	life_circle(t_head_struct *all)
 
 	i = 0;
 //	create while all philo
+	all->start_time = get_time();
 	while(i < all->counts_philo)
 	{
-		all->philo[i].last_time_to_eat = get_time();
 		pthread_create(&all->philo[i].id, NULL, &eat_sleep_think, &all->philo[i]);
-		i += 2;
-	}
-
-	i = 1;
-	while(i < all->counts_philo)
-	{
-		all->philo[i].last_time_to_eat = get_time();
-		pthread_create(&all->philo[i].id, NULL, &eat_sleep_think, &all->philo[i]);
-		i += 2;
-	}
-	i = 0;
-	while (i < all->counts_philo)
-	{
-		pthread_detach(all->philo[i].id);
 		i++;
+		usleep(50);
 	}
-//	i = 0;
-//	while (i < all->counts_philo)
-//	{
-//		pthread_detach(all->philo[i].id);
-//		i++;
-//	}
 }
 
 int		free_forks(t_head_struct *all, int len)
@@ -196,7 +172,6 @@ void 	init_struct(t_head_struct *all, int argc, char **argv)
 		all->counts_to_need_eat = ft_atoi(argv[5]);
 	}
 	all->flag_die = 0;
-	all->start_time = get_time();
 	all->philo = malloc(sizeof(t_philosophers) * all->counts_philo);
 	if (!all->philo)
 	{
@@ -228,12 +203,17 @@ int		main(int argc, char **argv)
 		int i = 0;
 		while (i < all.counts_philo)
 		{
-			if (all.philo[i].limit < get_time())
+
+			if (all.philo[i].limit <= get_time())
 			{
 				write_action(all.philo, DIE);
 				all.flag_die = 1;
 				break ;
 			}
+			if (all.philo[i].eat_count == 1)
+				count++;
+			if (count == all.counts_philo)
+				break;
 			i++;
 		}
 		if (all.flag_die)
@@ -241,3 +221,10 @@ int		main(int argc, char **argv)
 	}
 	return (0);
 }
+
+//	timestamp_in_ms X has taken a fork
+//	◦ timestamp_in_ms X is eating
+//	◦ timestamp_in_ms X is sleeping
+//	◦ timestamp_in_ms X is thinking
+//	◦ timestamp_in_ms X died
+
