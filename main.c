@@ -1,25 +1,19 @@
 
 #include "philosophers.h"
 
-int 	error_arguments()
-{
-	write(1, "Wrong number of arguments!\n", 27);
-	return (0);
-}
-
 int		main(int argc, char **argv)
 {
 	struct s_head_struct	all;
 
 	if (argc != 5 && argc != 6)
-		return (error_arguments());
-	init_struct(&all, argc, argv);
+		return (error_arguments("Wrong number of arguments!\n"));
+	if (!init_struct(&all, argc, argv))
+		return (0);
 	while (1)
 	{
 		int i = 0;
 		while (i < all.counts_philo)
 		{
-
 			if (all.philo[i].limit <= get_time())
 			{
 				write_action(all.philo, DIE);
@@ -36,6 +30,7 @@ int		main(int argc, char **argv)
 		if (all.flag_die || all.flag_eat)
 			break ;
 	}
+	free_struct(&all);
 	return (0);
 }
 

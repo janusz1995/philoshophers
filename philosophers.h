@@ -42,9 +42,12 @@ typedef	struct				s_head_struct
 	pthread_mutex_t			*write_m;
 }							t_head_struct;
 
+int 		error_arguments();
+int			malloc_error(char *str);
 int			ft_atoi(const char *str);
 int 		ft_strlen(const char *str);
-int			free_forks(t_head_struct *all, int len);
+int			free_forks_and_philo(t_head_struct *all, int len);
+int			init_struct(t_head_struct *all, int argc, char **argv);
 
 uint64_t	get_time();
 
@@ -53,8 +56,9 @@ void		ft_putnbr_fd(int n, int fd);
 void		ft_putchar_fd(char c, int fd);
 void		ft_putstr_fd(char *s, int fd);
 void		life_circle(t_head_struct *all);
+void		free_struct(t_head_struct *all);
+void		free_id_philo(t_head_struct *all, int len);
 void		write_action(t_philosophers *philo, int type);
-void 		init_struct(t_head_struct *all, int argc, char **argv);
 
 char		*ft_itoa(int c);
 
