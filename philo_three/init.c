@@ -6,10 +6,12 @@ void		init_forks_and_write(t_head_struct *all)
 	sem_unlink("/forks");
 	sem_unlink("/write");
 	sem_unlink("/eating");
+	sem_unlink("/die");
 
 	all->forks = sem_open("/forks", O_CREAT | O_EXCL, 0644, all->counts_philo);
 	all->eating_m = sem_open("/eating", O_CREAT | O_EXCL, 0644, all->counts_philo / 2);
 	all->write_m = sem_open("/write", O_CREAT | O_EXCL, 0644, 1);
+	all->die_m = sem_open("/die", O_CREAT | O_EXCL, 0644, 1);
 }
 
 int			init_philophers(t_head_struct *all)
@@ -35,7 +37,7 @@ int			init_philophers(t_head_struct *all)
 
 int			check_params(t_head_struct *all)
 {
-	if (all->counts_philo < 2 || all->time_to_die < 0 || all->time_to_eat < 0 || all->time_to_sleep < 0
+	if (all->counts_philo < 2 || all->time_to_die < 130 || all->time_to_eat < 0 || all->time_to_sleep < 0
 		|| all->counts_to_need_eat < 0)
 	{
 		error_arguments("Wrong arguments\n");
@@ -56,9 +58,6 @@ int			init_struct(t_head_struct *all, int argc, char **argv)
 		all->counts_to_need_eat = 0;
 	if (!(check_params(all)))
 		return (0);
-	all->counts_argc = argc;
-	all->flag_die = 0;
-	all->flag_eat = 0;
 	all->finish_eat = 0;
 	all->philo = malloc(sizeof(t_philosophers) * all->counts_philo);
 	if (!all->philo)
@@ -70,6 +69,7 @@ int			init_struct(t_head_struct *all, int argc, char **argv)
 		return (free_forks_and_philo(all, all->counts_philo)); // malloc error
 	}
 	init_philophers(all);
-	life_circle(all);
+	if (!life_circle(all))
+		return (0);
 	return (1);
 }
