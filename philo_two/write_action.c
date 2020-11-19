@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   write_action.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: drina <marvin@42.fr>                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/11/19 17:15:17 by drina             #+#    #+#             */
+/*   Updated: 2020/11/19 17:15:23 by drina            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 
@@ -8,7 +19,7 @@ void	write_action(t_philosophers *philo, int type)
 		sem_wait(philo->data->write_m);
 		ft_putnbr_fd(get_time() - philo->data->start_time, 1);
 		write(1, "\t", 1);
-		write(1, philo->number_philo, ft_strlen(philo->number_philo)); // num philo
+		write(1, philo->number_philo, ft_strlen(philo->number_philo));
 		if (type == TAKE_FORK)
 			write(1, " has taken a fork\n", 18);
 		else if (type == EAT)

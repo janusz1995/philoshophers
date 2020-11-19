@@ -1,37 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   kill_all_process.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: drina <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/19 17:14:26 by drina             #+#    #+#             */
-/*   Updated: 2020/11/19 17:14:29 by drina            ###   ########.fr       */
+/*   Created: 2020/11/19 17:00:13 by drina             #+#    #+#             */
+/*   Updated: 2020/11/19 17:00:18 by drina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void	free_id_philo(t_head_struct *all, int len)
+void	kill_all_process(t_head_struct *all)
 {
-	int		i;
+	int i;
 
 	i = 0;
-	while (i < len)
+	while (i < all->counts_philo)
 	{
-		free(all->philo[i].number_philo);
+		kill(all->philo[i].pid, SIGKILL);
 		i++;
 	}
-}
-
-void	free_struct(t_head_struct *all)
-{
-	free_id_philo(all, all->counts_philo);
-	free_forks_and_philo(all, all->counts_philo);
-}
-
-int		free_forks_and_philo(t_head_struct *all, int len)
-{
-	free(all->philo);
-	return (0);
+	sem_post(all->die_m);
 }

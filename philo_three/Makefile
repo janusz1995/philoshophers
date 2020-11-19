@@ -6,7 +6,7 @@ NAME = philo_three
 
 SRC =   errors.c ft_atoi.c ft_itoa.c ft_put_fd.c get_time.c main.c \
 		eat_sleep_think.c free.c ft_strlen.c init.c life_circle.c \
-		write_action.c
+		write_action.c kill_all_process.c
 
 SRCO = $(SRC:.c=.o)
 

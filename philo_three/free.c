@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   free.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: drina <marvin@42.fr>                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/11/19 16:58:59 by drina             #+#    #+#             */
+/*   Updated: 2020/11/19 16:59:28 by drina            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 
@@ -21,9 +32,6 @@ void	free_struct(t_head_struct *all)
 
 int		free_forks_and_philo(t_head_struct *all, int len)
 {
-//	sem_close(all->eating_m);
-//	sem_close(all->forks);
-//	sem_close(all->write_m);
 	free(all->philo);
 	return (0);
 }

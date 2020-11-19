@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: drina <marvin@42.fr>                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/11/19 17:38:59 by drina             #+#    #+#             */
+/*   Updated: 2020/11/19 17:39:01 by drina            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 
@@ -42,7 +53,8 @@ int			init_forks(t_head_struct *all)
 	int		i;
 
 	i = 0;
-	all->forks = (pthread_mutex_t**)malloc(sizeof(pthread_mutex_t*) * all->counts_philo);
+	all->forks = (pthread_mutex_t**)malloc(sizeof(pthread_mutex_t*)
+													* all->counts_philo);
 	if (!all->forks)
 	{
 		free(all->philo);
@@ -60,27 +72,21 @@ int			init_forks(t_head_struct *all)
 	return (1);
 }
 
-int			check_params(t_head_struct *all)
+void		init_time_and_counts(t_head_struct *all, int argc, char **argv)
 {
-	if (all->counts_philo < 2 || all->time_to_die < 0 || all->time_to_eat < 0 || all->time_to_sleep < 0
-		|| all->counts_to_need_eat < 0)
-	{
-		error_arguments("Wrong arguments\n");
-		return (0);
-	}
-	return (1);
-}
-
-int			init_struct(t_head_struct *all, int argc, char **argv)
-{
-	all->counts_philo = ft_atoi(argv[1]); // counts philoshophers
-	all->time_to_die = ft_atoi(argv[2]); // time to die philo
-	all->time_to_eat = ft_atoi(argv[3]); // time to eat
-	all->time_to_sleep = ft_atoi(argv[4]); // time to sleep
+	all->counts_philo = ft_atoi(argv[1]);
+	all->time_to_die = ft_atoi(argv[2]);
+	all->time_to_eat = ft_atoi(argv[3]);
+	all->time_to_sleep = ft_atoi(argv[4]);
 	if (argc == 6)
 		all->counts_to_need_eat = ft_atoi(argv[5]);
 	else
 		all->counts_to_need_eat = 0;
+}
+
+int			init_struct(t_head_struct *all, int argc, char **argv)
+{
+	init_time_and_counts(all, argc, argv);
 	if (!(check_params(all)))
 		return (0);
 	all->counts_argc = argc;
@@ -96,7 +102,7 @@ int			init_struct(t_head_struct *all, int argc, char **argv)
 	if (!all->write_m)
 	{
 		ft_putstr_fd("Malloc error :)\n", 1);
-		return (free_forks_and_philo(all, all->counts_philo)); // malloc error
+		return (free_forks_and_philo(all, all->counts_philo));
 	}
 	init_philophers(all);
 	life_circle(all);

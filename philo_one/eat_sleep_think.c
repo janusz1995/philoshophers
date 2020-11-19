@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   eat_sleep_think.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: drina <marvin@42.fr>                       +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/11/19 17:38:22 by drina             #+#    #+#             */
+/*   Updated: 2020/11/19 17:38:28 by drina            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philosophers.h"
 
@@ -34,7 +45,8 @@ void	*eat_sleep_think(void *tmp)
 		if (philo->data->flag_die == 1 || philo->data->flag_eat == 1)
 			break ;
 		eat(philo);
-		if (philo->eat_count == philo->data->counts_to_need_eat && philo->data->counts_argc == 6)
+		if (philo->eat_count == philo->data->counts_to_need_eat &&
+										philo->data->counts_argc == 6)
 		{
 			philo->data->finish_eat++;
 			break ;

@@ -1,37 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free.c                                             :+:      :+:    :+:   */
+/*   check_params.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: drina <marvin@42.fr>                       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/19 17:14:26 by drina             #+#    #+#             */
-/*   Updated: 2020/11/19 17:14:29 by drina            ###   ########.fr       */
+/*   Created: 2020/11/19 18:05:48 by drina             #+#    #+#             */
+/*   Updated: 2020/11/19 18:05:49 by drina            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void	free_id_philo(t_head_struct *all, int len)
+int			check_params(t_head_struct *all)
 {
-	int		i;
-
-	i = 0;
-	while (i < len)
+	if (all->counts_philo < 2 || all->time_to_die < 0 || all->time_to_eat < 0
+		|| all->time_to_sleep < 0 || all->counts_to_need_eat < 0)
 	{
-		free(all->philo[i].number_philo);
-		i++;
+		error_arguments("Wrong arguments\n");
+		return (0);
 	}
-}
-
-void	free_struct(t_head_struct *all)
-{
-	free_id_philo(all, all->counts_philo);
-	free_forks_and_philo(all, all->counts_philo);
-}
-
-int		free_forks_and_philo(t_head_struct *all, int len)
-{
-	free(all->philo);
-	return (0);
+	return (1);
 }
